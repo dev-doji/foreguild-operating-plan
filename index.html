@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Foreguild: The Working Guild</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Operating plan for Foreguild, a futarchy-governed AI job board, optimised for revenue.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column (ledger page) with wide tables that break out; margin notes become inline callouts on phones. */
+:root{
+  --paper:#f6f7f4; --sheet:#ffffff; --ink:#16212a; --muted:#56636c; --rule:#d8ddd8;
+  --verdigris:#1d6f62; --verdigris-soft:#e3efeb; --brass:#94661f; --brass-soft:#f5ecdc; --bad:#a3392c;
+  --display:"Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#11181d; --sheet:#172027; --ink:#e4e9e6; --muted:#9aa7ad; --rule:#2c3940;
+  --verdigris:#5fbfae; --verdigris-soft:#1c3330; --brass:#d7a756; --brass-soft:#33291a; --bad:#e07a6c; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#11181d; --sheet:#172027; --ink:#e4e9e6; --muted:#9aa7ad; --rule:#2c3940;
+  --verdigris:#5fbfae; --verdigris-soft:#1c3330; --brass:#d7a756; --brass-soft:#33291a; --bad:#e07a6c; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding-block:40px 80px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.2rem,6vw,3.5rem);font-weight:700;letter-spacing:-.02em}
+h2{font-size:1.75rem;font-weight:700;margin-top:3.2rem;padding-top:1rem;border-top:2px solid var(--ink);display:flex;gap:.6em;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.9rem;font-weight:500;color:var(--verdigris)}
+h3{font-size:1.2rem;font-weight:600;margin-top:2rem}
+p,li{max-width:68ch}
+p{margin:.8rem 0}
+ul,ol{padding-left:1.3rem;margin:.6rem 0}
+li{margin:.25rem 0}
+a{color:var(--verdigris);text-underline-offset:2px}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+strong{font-weight:600}
+code,.mono{font-family:var(--mono);font-size:.86em}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--verdigris)}
+.lede{font-size:1.25rem;line-height:1.5;color:var(--ink);max-width:60ch;margin-top:1rem}
+.byline{font-family:var(--mono);font-size:.82rem;color:var(--muted);margin-top:1.2rem;display:flex;flex-wrap:wrap;gap:.4rem 1.4rem}
+.byline .fill{background:var(--brass-soft);color:var(--brass);padding:0 .35em;border-radius:3px}
+
+.figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:2rem 0 1rem}
+.fig{background:var(--sheet);padding:14px 16px;min-width:0}
+.fig b{display:block;font-family:var(--display);font-size:1.7rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.fig span{font-family:var(--mono);font-size:.74rem;color:var(--muted);letter-spacing:.02em}
+@media (max-width:640px){.figs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.summary{background:var(--sheet);border:1px solid var(--rule);padding:18px 22px;margin:1.2rem 0}
+.summary ol{margin:0;padding-left:1.4rem}
+.summary li{margin:.45rem 0}
+
+.note{border-left:3px solid var(--brass);background:var(--brass-soft);padding:10px 14px;margin:1.2rem 0;font-size:.95rem;max-width:68ch}
+.note.green{border-color:var(--verdigris);background:var(--verdigris-soft)}
+.note b{font-family:var(--display);font-weight:600}
+
+.tbl{overflow-x:auto;margin:1.2rem 0;border:1px solid var(--rule);background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--display);font-weight:600;font-size:.82rem;letter-spacing:.02em;background:var(--paper);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--mono);font-size:.84rem}
+td.k{font-family:var(--display);font-weight:600;white-space:nowrap}
+tr.total td{font-weight:600;background:var(--verdigris-soft)}
+.tag{display:inline-block;font-family:var(--mono);font-size:.7rem;padding:1px 6px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.tag.fact{color:var(--verdigris)} .tag.asm{color:var(--brass)} .tag.kill{color:var(--bad)}
+
+.flow{list-style:none;padding:0;margin:1.2rem 0;border-left:2px solid var(--verdigris)}
+.flow li{position:relative;padding:0 0 1rem 1.3rem;max-width:none}
+.flow li::before{content:"";position:absolute;left:-7px;top:.5em;width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid var(--verdigris)}
+.flow .t{font-family:var(--mono);font-size:.78rem;color:var(--verdigris);display:block}
+
+.market{background:var(--sheet);border:1px solid var(--rule);padding:14px 18px;margin:1rem 0}
+.market h4{font-size:1rem;font-weight:600;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline}
+.market dl{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:.3rem 1rem;margin:.7rem 0 0;font-size:.9rem}
+.market dt{font-family:var(--mono);font-size:.76rem;color:var(--muted);padding-top:.15rem}
+.market dd{margin:0}
+@media (max-width:560px){.market dl{grid-template-columns:1fr}.market dt{padding-top:.5rem}}
+
+.ladder{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:1.2rem 0}
+.rung{background:var(--sheet);border:1px solid var(--rule);border-top:4px solid var(--verdigris);padding:12px 14px;min-width:0;font-size:.9rem}
+.rung b{font-family:var(--display);display:block;font-size:1rem}
+.rung .pct{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+@media (max-width:700px){.ladder{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.chart{background:var(--sheet);border:1px solid var(--rule);padding:14px;margin:1.2rem 0}
+.chart svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-family:var(--mono);font-size:.76rem;color:var(--muted);margin-top:.4rem}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+
+.calc{background:var(--sheet);border:1px solid var(--rule);padding:16px 18px;margin:1.2rem 0}
+.calc .row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.calc button{font-family:var(--mono);font-size:.8rem;padding:6px 12px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:4px;cursor:pointer}
+.calc button[aria-pressed="true"]{background:var(--verdigris);border-color:var(--verdigris);color:var(--sheet)}
+.inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px}
+.inputs label{font-family:var(--mono);font-size:.74rem;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:0}
+.inputs input{font-family:var(--mono);font-size:.9rem;padding:6px 8px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:4px;width:100%}
+@media (max-width:640px){.inputs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.out{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:14px}
+.out div{background:var(--paper);padding:10px 12px;min-width:0}
+.out b{display:block;font-family:var(--display);font-size:1.3rem;font-variant-numeric:tabular-nums}
+.out span{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+@media (max-width:640px){.out{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:700px){.two{grid-template-columns:1fr}}
+footer{margin-top:4rem;padding-top:1rem;border-top:1px solid var(--rule);font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+
+@media print{
+  @page{size:A4;margin:12mm 13mm 14mm}
+  :root{--paper:#fff;--sheet:#fff}
+  body{font-size:9.4pt;line-height:1.5;background:#fff}
+  .wrap{max-width:none;padding:0}
+  .no-print{display:none!important}
+  h2{break-after:avoid;margin-top:1.6rem}
+  h3,h4{break-after:avoid}
+  .tbl,.market,.rung,.chart,.fig,.note,tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .src a::after{content:" (" attr(href) ")";font-size:.78em;color:var(--muted);word-break:break-all}
+  .src li{max-width:none}
+  .tbl{overflow:visible}
+  p,li,.note{max-width:none}
+  th,th.num{white-space:normal}
+  table{font-size:8pt}
+  h2{font-size:1.45rem}
+  .lede{font-size:1.1rem}
+  .flow li{break-inside:avoid}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Operating plan · Seer FAO Operating Plan Contest · November 2026</div>
+  <h1>Foreguild: The Working Guild</h1>
+  <p class="lede">Foreguild should not be a job board that takes a cut. It should be a guild that sells finished, machine-checked work, does most of that work with its own agents, and passes the overflow to outside agents. Futarchy decides the few levers that move revenue.</p>
+  <div class="byline">
+    <span>Submitted by Emmanuel Doji</span>
+    <span>Version 1.1 · 2026-11-08</span>
+    <span>All financial figures are planning assumptions unless tagged <span class="tag fact">fact</span></span>
+  </div>
+</header>
+
+<div class="figs" aria-label="Base case headline figures">
+  <div class="fig"><b>$55.8k</b><span>Month-12 retained net revenue, base case</span></div>
+  <div class="fig"><b>Month 7</b><span>First month net-positive, base case</span></div>
+  <div class="fig"><b>$49k</b><span>Peak funding need, base case</span></div>
+  <div class="fig"><b>$41k</b><span>Five-year value of one retainer client. A code buyer is worth about $182.</span></div>
+</div>
+
+<section class="summary" aria-label="The plan in eight lines">
+  <ol>
+    <li><strong>Sell outcomes, keep the ticket.</strong> A marketplace keeps a 10% fee. A guild that does the work itself keeps the ticket minus compute, which is about 80% of the ticket on a code task after compute, checking and selling costs. Revenue optimisation points to the guild model.</li>
+    <li><strong>Only take work a machine can check.</strong> Tests in clean CI, a merged pull request, a schema, an on-chain state. The buyer signs the acceptance check before work starts, so the check is the contract.</li>
+    <li><strong>Find buyers first.</strong> Agents are plentiful. Funded buyers are scarce. The swarm's largest job is selling: it turns open GitHub issues into fixed-price, pay-on-merge quotes.</li>
+    <li><strong>Two lanes lead, doing different jobs.</strong> Pay-on-merge code tasks are the front door: a small, low-risk way to prove the work. Market-operations retainers for prediction markets and DAOs are what keeps customers paying for years. Monthly standing orders and a pay-per-call API follow.</li>
+    <li><strong>Make or route.</strong> For each task the Dispatcher decides whether house agents do it or outside agents bid for it. Outside agents earn 75% of the ticket. Both paths earn revenue.</li>
+    <li><strong>One metric:</strong> Retained Net Revenue (RNR). Buyer payments that survived the refund window, minus payouts to outside agents, counted only from independent buyers, with any one buyer capped at 15%.</li>
+    <li><strong>Two-speed futarchy.</strong> Reversible decisions run on 14-day markets (RNR-14) so the guild can learn monthly. Large or irreversible ones run on 90-day markets (RNR-90). A small share of passed fast decisions is executed by coin flip to keep prices honest about cause and effect.</li>
+    <li><strong>Kill rules are written in advance.</strong> If buyers do not show up by day 90, Foreguild shrinks to the one lane that works rather than buying volume.</li>
+  </ol>
+</section>
+
+<h2><span class="n">01</span>The bet</h2>
+<p>The brief describes Foreguild as "a swarm of agents doing work." Most plans read that as a marketplace: buyers post, agents compete, the platform takes 6 to 15%. That model has two problems for an organisation optimised for revenue.</p>
+<ul>
+  <li><strong>The take is small.</strong> On a $120 task, a 10% fee is $12. The same task delivered by the guild's own agents leaves about $97 after refunds, compute, verification and selling cost.</li>
+  <li><strong>The scarce side is the buyer.</strong> Capable agents get cheaper every quarter. People and organisations willing to commit money before work starts are hard to find. A marketplace still has to find those buyers, and once it has, it gives most of the ticket away.</li>
+</ul>
+<p>So Foreguild is built as a <strong>working guild</strong>. It sells a finished outcome at a fixed price, decides who does the work, and stands behind the result. Outside agents are welcome. They join as subcontractors, bid for routed work, and keep 75% of the ticket. The guild still earns on every task, and outside capacity lets it take more work than its own swarm can handle.</p>
+<div class="note green"><b>Why this suits futarchy.</b> A guild has a handful of levers that clearly move revenue: price per lane, how much work stays in-house, which lanes are open, where the sales swarm looks for buyers, and what to spend. Each lever is a clean decision a conditional market can price.</div>
+
+<h2><span class="n">02</span>What Foreguild sells</h2>
+<p>Every lane has a check a machine can run, a named type of buyer, and a price fixed before work starts. Work that can only be judged by taste stays out until the guild has a verified track record.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Lane</th><th>Buyer</th><th>Acceptance check</th><th class="num">Price</th><th>Opens</th></tr></thead>
+  <tbody>
+    <tr><td class="k">A · Pay-on-merge code</td><td>Open-source maintainers, protocol teams, DAOs with backlogs</td><td>Buyer's CI plus guild-written tests the buyer approved, run in a clean container. Payment releases on merge.</td><td class="num">$60–$400<br>base avg $120</td><td>Day 1</td></tr>
+    <tr><td class="k">B · Market operations</td><td>Prediction-market platforms, DAOs, oracle users</td><td>Monthly service checklist: markets drafted to a resolution template, evidence dossiers for oracle answers, monitoring alerts. The buyer can reject single items for a credit.</td><td class="num">$1,500 / month</td><td>Month 2</td></tr>
+    <tr><td class="k">C · Standing orders</td><td>Teams that want upkeep without hiring</td><td>Recurring jobs each judged by CI and merge: dependency updates, test coverage targets, broken-build repair, docs that match the code.</td><td class="num">$600 / month</td><td>Month 3</td></tr>
+    <tr><td class="k">D · Agent API</td><td>Other AI agents that need a subtask done</td><td>A JSON schema or test file sent with the request. Pay per call over an HTTP payment rail. Unpaid if the output fails the check.</td><td class="num">$0.50–$20 / call</td><td>Month 4</td></tr>
+    <tr><td class="k">E · Open board</td><td>Anyone posting anything with a check</td><td>Buyer-defined check. Outside agents bid. Guild takes a settlement fee.</td><td class="num">8–12% fee</td><td>When a market says so</td></tr>
+  </tbody>
+</table></div>
+<p><strong>Lanes A and B lead together and do different jobs.</strong> Lane A is the front door: a $120 fixed-price task is a small, low-risk way for a stranger to find out the work is good. Lane B is what keeps customers: a monthly retainer for work that never really finishes. Lane C turns happy Lane A buyers into monthly customers. Lane D is a small bet on agent-to-agent demand.</p>
+<p>Lane B is chosen on purpose. Secondary sources report that prediction-market resolution disputes often turn on how a question was worded, and that more than 1,150 Polymarket markets were disputed in the first five months of 2026. Drafting questions with clear resolution rules, gathering evidence for oracle answers and watching for markets that need attention is work agents can do and a buyer can check. Seer is a natural first buyer, and a guild that gets good at well-specified markets also improves the tool it is governed by.</p>
+<h3>Why two lanes lead: what the research says</h3>
+<p>Each row below is a secondary source or this plan's own model, so read the figures as direction, not proof. Sources are listed in section 13.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Question</th><th>Lane A: code tasks</th><th>Lane B: market operations</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Do customers stay?</td><td>Rarely. A buyer orders a task and leaves unless converted. Model: 2.5 tasks per buyer.</td><td>Longer. One agency source reports about 18% annual churn for retainers against 42% for project work. Model: 1.6% a month.</td></tr>
+    <tr><td class="k">How many customers cover the costs?</td><td>About 144 tasks a month.</td><td>About 10 clients.</td></tr>
+    <tr><td class="k">What does a new customer cost?</td><td>Low each, but many are needed. Algora bounties draw many competing pull requests, with a self-reported 15% merge rate.</td><td>$2,500 each (assumption), paid back in about 2.4 months.</td></tr>
+    <tr><td class="k">What threatens it over five years?</td><td>The falling price of AI work. Sources put the cost of an agent completing a coding task at roughly $0.03 to $3, so buyers will expect low prices.</td><td>A small buyer pool. Sources count 13 to 23 prediction-market platforms, and one ranking puts two of them at about 86% of volume.</td></tr>
+    <tr><td class="k">Is the problem real?</td><td>Yes, but maintainers can also get free help.</td><td>Yes, but demand from Seer-sized teams is not confirmed.</td></tr>
+  </tbody>
+</table></div>
+<p><strong>The hybrid.</strong> A code buyer is worth about $182 as a one-off. If one in five becomes a standing order, the average rises to about $2,364. One retainer client is worth about $41k over five years. Lane A is the cheapest way to earn trust and Lanes B and C are where the long-term money is, so the number Foreguild watches above all others in its first year is the share of Lane A buyers who order again.</p>
+
+<h2><span class="n">03</span>Where tasks come from</h2>
+<p>Demand is the constraint, so most of the swarm's effort goes into finding buyers. Sources, in order of priority:</p>
+<ol>
+  <li><strong>Pay-on-merge quotes.</strong> The Scout reads public issue trackers for issues that are well specified, have tests nearby, and have been open more than 30 days. The Closer sends the maintainer one fixed-price offer: "We will fix this for $X. You pay only if CI passes and you merge." Foreguild never opens unsolicited pull requests. Work starts only after the maintainer accepts and funds escrow.</li>
+  <li><strong>Ecosystem retainers.</strong> Lane B is sold directly to prediction-market platforms, oracle users and DAOs, starting with the Seer, Gnosis and Kleros ecosystems.</li>
+  <li><strong>Conversion to standing orders.</strong> Any buyer with three accepted tasks is offered a monthly standing order. Repeat revenue is cheaper to win than new revenue.</li>
+  <li><strong>Agent-to-agent demand.</strong> Other agents call the Lane D API when they hit a subtask outside their skills. Discovery through agent registries and payment-rail directories.</li>
+  <li><strong>Open board.</strong> Opened later, when a market forecasts it raises RNR.</li>
+</ol>
+<div class="note"><b>Rule against spam.</b> The sales swarm may send one offer per issue and none to a maintainer who has declined twice. Agent spam on open-source projects is a real and growing problem, and a guild that adds to it loses the buyers it needs.</div>
+
+<h2><span class="n">04</span>The swarm</h2>
+<p>Each role is an agent, or a pool of agents, with one job, one number it is judged on, and a hard limit on what it can do. No agent holds keys that can move treasury funds.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Role</th><th>What it does</th><th>Judged on</th><th>Cannot</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Scout</td><td>Finds candidate work: issues, retainer prospects, agent registries</td><td>Quotes accepted per 100 leads</td><td>Contact anyone</td></tr>
+    <tr><td class="k">Closer</td><td>Sends quotes, answers buyer questions, converts repeat buyers to standing orders</td><td>RNR from buyers it closed</td><td>Price outside the band set by the market</td></tr>
+    <tr><td class="k">Scoper</td><td>Writes the acceptance check, gets the buyer to sign it, refuses work that cannot be checked</td><td>Dispute rate on its specs</td><td>Accept work without a signed check</td></tr>
+    <tr><td class="k">Pricer</td><td>Quotes from history: size, language, test coverage, past success rate</td><td>Margin vs forecast</td><td>Go below the lane floor</td></tr>
+    <tr><td class="k">Dispatcher</td><td>Make-or-route decision for each task, then assigns house workers or runs a sealed-bid auction for outside agents</td><td>Contribution per task</td><td>Route to a worker with an open dispute</td></tr>
+    <tr><td class="k">Workers</td><td>House agents and outside subcontractors do the work in sandboxes with no secrets</td><td>First-pass acceptance rate</td><td>Merge, deploy or touch buyer credentials</td></tr>
+    <tr><td class="k">Verifier</td><td>Runs the check in a clean container. Runs a second model from a different provider on anything over $300</td><td>Missed defects found in audit</td><td>Verify its own house team's work alone above $300</td></tr>
+    <tr><td class="k">Clerk</td><td>Escrow, settlement, refunds, invoices, the public ledger</td><td>Settlement errors (target zero)</td><td>Release funds without a passing check or a ruling</td></tr>
+    <tr><td class="k">Treasurer</td><td>Pays approved spends from monthly envelopes, manages escrow float</td><td>Spend vs envelope</td><td>Spend outside an envelope or a passed proposal</td></tr>
+    <tr><td class="k">Analyst</td><td>Publishes RNR daily, drafts proposals from the data, keeps the market scorecard</td><td>Forecast calibration</td><td>Trade in decision markets</td></tr>
+  </tbody>
+</table></div>
+<h3>Make or route</h3>
+<p>For each task the Dispatcher compares two expected values. House: success probability × ticket, minus expected compute including failed attempts. Routed: 25% of the ticket, minus verification. It also checks house capacity. If the house path wins and there is capacity, house agents take it. If not, outside agents bid. Bids are ranked on price, track record and bond. A bond of 10% of the ticket is lost on a failed delivery. Two futarchy levers sit here: the house share target and the outside payout rate (band 65–85%).</p>
+
+<h2><span class="n">05</span>One task, start to finish</h2>
+<ol class="flow">
+  <li><span class="t">Day 0 · 09:00</span>The Scout flags an issue in a wallet SDK: "Add EIP-712 typed-data signing helper." Open 41 days, 2 maintainer comments, tests next to the target module.</li>
+  <li><span class="t">Day 0 · 09:20</span>The Pricer quotes $180 from 37 similar past tasks (first-pass success 71%). The Closer sends the maintainer one offer with a draft acceptance check: three new test cases plus the existing CI suite.</li>
+  <li><span class="t">Day 1</span>The maintainer edits one test case, signs the check, and funds $180 USDC into escrow on Base. The task becomes a contract.</li>
+  <li><span class="t">Day 1</span>The Dispatcher keeps it in-house: house success estimate 0.78, expected compute $12 including failed attempts, house margin far above the routed margin.</li>
+  <li><span class="t">Day 2</span>A house worker opens a pull request. The Verifier runs CI and the signed tests in a clean container, plus a second-model review, a secret scan and a licence check. All pass.</li>
+  <li><span class="t">Day 3</span>The maintainer merges. The Clerk releases payment to the guild treasury. The 7-day refund window starts.</li>
+  <li><span class="t">Day 10</span>No regression reported. $180 enters RNR. Contribution after refunds, compute, verification and selling: about $150.</li>
+</ol>
+
+<h2><span class="n">06</span>How work is assessed</h2>
+<p>Most disputes on agent job boards come from vague briefs, not bad work. Foreguild moves the argument to before work starts: the Scoper writes the check, the buyer edits and signs it, and the signed check decides payment.</p>
+<div class="ladder">
+  <div class="rung"><b>L0 · Machine check</b><span class="pct">every task</span><br>Signed tests, CI, schema, on-chain state. Pass or fail.</div>
+  <div class="rung"><b>L1 · Buyer window</b><span class="pct">every task</span><br>72 hours to raise a problem the tests missed. Silence counts as acceptance.</div>
+  <div class="rung"><b>L2 · Second review</b><span class="pct">over $300, plus 2% random</span><br>A model from a different provider. A paid human reviewer audits the random 2%.</div>
+  <div class="rung"><b>L3 · Arbitration</b><span class="pct">disputes over $500</span><br>Kleros. Under $500, a steward rules within 48 hours.</div>
+</div>
+<p>Defects found in the 2% audit cost the Verifier's track record and feed the Pricer. If the audited defect rate in a lane rises above 5%, that lane's quotes pause until the Analyst publishes a fix.</p>
+
+<h2><span class="n">07</span>Money, spending and disputes</h2>
+<div class="two">
+  <div>
+    <h3>Escrow and settlement</h3>
+    <ul>
+      <li>Buyer funds sit in a non-custodial escrow contract on Base. They are never treasury money.</li>
+      <li>Release needs a passing check (L0) and no open objection (L1), or a ruling (L3).</li>
+      <li>Refund window: 7 days for code, item credits for retainers.</li>
+      <li>All settlements are public. RNR can be recomputed by anyone from contract events.</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Spending</h3>
+    <ul>
+      <li>Monthly envelopes for compute, outbound sales, verification and the decision-market budget, set by slow-lane markets each quarter.</li>
+      <li>Under $2,000 inside an envelope: the Treasurer pays.</li>
+      <li>$2,000 to $10,000, or outside an envelope: fast-lane market.</li>
+      <li>Over $10,000: slow-lane market plus the steward veto window.</li>
+    </ul>
+  </div>
+</div>
+<h3>Disputes</h3>
+<p>A buyer raises an objection within the window, with evidence. The Scoper checks it against the signed check. If the check was met, the objection fails. If not, the guild redoes the work once at no charge or refunds. A buyer who disagrees can escalate: steward ruling under $500, Kleros above. The losing side pays the arbitration fee. An outside agent who loses a dispute forfeits its bond to the buyer.</p>
+<h3>Where humans step in</h3>
+<p>Five stewards (two founding operators, one buyer representative, one representative of outside agent operators, one independent) hold a 3-of-5 multisig with narrow powers:</p>
+<ul>
+  <li><strong>Can:</strong> pause a lane or all payouts; veto a passed proposal within 48 hours with a published reason; rule on disputes under $500; handle legal requests and sanctions screening.</li>
+  <li><strong>Cannot:</strong> spend treasury funds, change prices, or overturn a market result without a published veto. A veto can itself be overturned by a slow-lane market after 30 days.</li>
+</ul>
+<p>Stewards are paid a fixed stipend, included in fixed costs. Buyers on tasks over $1,000 get a named human contact.</p>
+
+<h2><span class="n">08</span>How futarchy governs</h2>
+<p>Futarchy here follows the standard form: choose one metric, write each decision as a proposal, run conditional markets on the metric if the proposal is executed and if it is not, and act on the branch the markets price higher.</p>
+<div class="note green"><b>What Seer documents, and what this plan adds.</b> Seer's documentation describes <strong>conditional markets</strong>: a child market depends on one outcome of a parent market, traders use the parent's outcome tokens as collateral, and a child whose parent resolves differently redeems for zero. Scalar (numeric) markets and Reality.eth numeric questions also exist, with Kleros as the court for disputed answers. Seer's own <strong>futarchy product</strong> is narrower: it compares a token's price in a yes pool and a no pool, and the proposal passes if the yes price is higher. The page I read says it is available only on Gnosis Chain. This plan uses the general conditional-market feature to price <em>revenue</em> instead of a token price. The documentation does not say whether a conditional child can be scalar, so that is an assumption to confirm with Seer. If it is not supported, the same questions are asked as Yes/No thresholds ("Will RNR-14 be at least $X?") on categorical conditional markets, and the guild compares the price of Yes in each branch.</div>
+<p><strong>Two chains.</strong> Buyer escrow sits on Base, where Poidh bounties run. Seer's futarchy markets sit on Gnosis Chain. Only one number crosses between them: the RNR figure, which anyone can recompute from Base contract events and which Reality.eth answerers report to the market. Seer's documentation lists deposits on Ethereum and Gnosis only, so escrow on Base is this plan's own choice, not a Seer feature.</p>
+
+<h3>The metric: Retained Net Revenue</h3>
+<div class="note green"><b>RNR</b> = buyer payments released from escrow whose refund window has closed, <strong>minus</strong> refunds and credits, <strong>minus</strong> payouts to outside agents. Two filters apply: revenue counts only from independent buyers (no funding path from guild, steward or worker wallets within two hops in the prior 90 days, wallet funded at least 14 days before the task), and no single buyer cluster can exceed 15% of the period's RNR.</div>
+<p>RNR is revenue in the guild's own pocket. It ignores revenue that passes straight through to outside agents, so self-dealing through subcontracts nets close to zero. It waits for the refund window, so revenue that may be refunded is not counted. The independence filter and cap mean wash trading, self-funded tasks and one friendly whale cannot buy a market result. The Analyst publishes the script that computes RNR from contract events. Reality.eth answerers run the same script.</p>
+<p>A guardrail metric, contribution margin, is tracked too. A proposal that passes on RNR but whose conditional markets forecast contribution margin below 50% moves to the slow lane. This stops the guild buying revenue with compute.</p>
+
+<h3>Two speeds</h3>
+<div class="tbl"><table>
+  <thead><tr><th></th><th>Fast lane</th><th>Slow lane</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Metric window</td><td>RNR-14: the 14 days starting 7 days after the decision</td><td>RNR-90: the 90 days starting 7 days after the decision</td></tr>
+    <tr><td class="k">For</td><td>Reversible changes: prices inside the band, house share, outbound targeting, verifier choice, spends $2k–$10k</td><td>Opening or closing a lane, changing a fee band, spends over $10k, steward changes, constitution</td></tr>
+    <tr><td class="k">Trading period</td><td>5 days</td><td>10 days</td></tr>
+    <tr><td class="k">Pass rule</td><td>Time-weighted price of RNR if executed beats not-executed by 3% over the last 48 hours</td><td>Same rule, 5% margin, then 48-hour steward veto window</td></tr>
+    <tr><td class="k">Cadence</td><td>Up to 4 a month</td><td>Up to 2 a quarter</td></tr>
+    <tr><td class="k">Afterwards</td><td>Reversion check at day 28: if realised RNR-14 falls below the not-executed forecast by more than its own 80% band, the change reverts unless a new market keeps it</td><td>Results published on the scorecard</td></tr>
+  </tbody>
+</table></div>
+<p>The fast lane answers the main practical complaint about revenue futarchy: a 90-day metric allows only a few decisions a year. Reversible decisions can be judged on a shorter window because a wrong call costs a few weeks, and the reversion check catches the ones the market got wrong.</p>
+
+<h3>Keeping prices honest</h3>
+<ul>
+  <li><strong>Randomised execution.</strong> One in ten passed fast-lane proposals is executed or not by a public coin flip (a committed future block hash). Both branches then settle on real outcomes. A published critique of futarchy argues that conditional markets cannot separate cause from selection once the price decides the action (<a href="https://www.lesswrong.com/posts/mW4ypzR6cTwKqncvp/futarchy-is-parasitic-on-what-it-tries-to-govern">LessWrong</a>). Randomising a sample is one way to measure the real effect. The coin-flip sample also gives the guild clean evidence of what its levers actually do.</li>
+  <li><strong>Depth floor.</strong> A market binds only if each branch pool holds at least $1,000 of liquidity and at least half of the revenue at stake, estimated as 90 days of affected RNR times the size of the change. Below the floor, the market is advisory and the status quo holds unless stewards act.</li>
+  <li><strong>Who may trade.</strong> Guild agents and stewards may not trade decision markets. One disclosed market-maker agent provides two-sided liquidity in a fixed band and never takes a directional position.</li>
+  <li><strong>Invalid or thin markets</strong> default to the status quo.</li>
+</ul>
+<h3>Paying for liquidity</h3>
+<p>Thin markets are the main reason revenue futarchy stays advisory. Foreguild budgets for liquidity from day one: 5% of RNR each month, with a $1,000 floor, goes to liquidity subsidies and to rewards for traders whose forecasts score well on the public scorecard. In the base case that is $2,800 a month by month 12. Early co-seeding from Seer would speed this up but is not assumed. On Seer, liquidity sits on Swapr, a concentrated-liquidity exchange, and providers earn fees only while the price stays inside the range they chose, so the subsidy is paid only for positions that stay active near the current price.</p>
+
+<h3>What markets decide</h3>
+<div class="tbl"><table>
+  <thead><tr><th>Lever</th><th>Starting value</th><th>Band</th><th>Lane</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Lane A price floor and multiplier</td><td>$60 floor; Pricer quote ×1.0</td><td>$40–$150; ×0.8–1.4</td><td>Fast</td></tr>
+    <tr><td class="k">House share target per lane</td><td>70% of Lane A tasks</td><td>40–90%</td><td>Fast</td></tr>
+    <tr><td class="k">Outside agent payout</td><td>75% of ticket</td><td>65–85%</td><td>Fast</td></tr>
+    <tr><td class="k">Outbound targeting</td><td>Repos with CI and 30+ day issues</td><td>Any segment</td><td>Fast</td></tr>
+    <tr><td class="k">Second verifier threshold</td><td>Tasks over $300</td><td>$100–$1,000</td><td>Fast</td></tr>
+    <tr><td class="k">Retainer and standing-order prices</td><td>$1,500 and $600 a month</td><td>±40%</td><td>Fast</td></tr>
+    <tr><td class="k">Open or close a lane</td><td>A–D open on schedule, E closed</td><td>n/a</td><td>Slow</td></tr>
+    <tr><td class="k">Quarterly spend envelopes</td><td>See section 10</td><td>n/a</td><td>Slow</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Staged autonomy</h3>
+<div class="tbl"><table>
+  <thead><tr><th>Stage</th><th>When</th><th>Markets</th><th>Moves on when</th></tr></thead>
+  <tbody>
+    <tr><td class="k">0 · Shadow</td><td>Days 0–60</td><td>All decisions run as markets. Stewards decide. Scorecard compares market forecasts with outcomes.</td><td>6 or more scored decisions, published</td></tr>
+    <tr><td class="k">1 · Fast lane binds</td><td>Days 60–180</td><td>Fast lane binds inside bands when the depth floor is met. Slow lane advisory.</td><td>Fast-lane forecasts beat a naive "no change" forecast on the scorecard</td></tr>
+    <tr><td class="k">2 · Both bind</td><td>Day 180+</td><td>Slow lane binds on spends and lanes, with the steward veto. Constitutional changes need a 10% margin and a 7-day delay.</td><td>n/a</td></tr>
+  </tbody>
+</table></div>
+
+<h2><span class="n">09</span>The first five markets</h2>
+<p>Written in the form they would be created on Seer. Dates assume launch on 1 February 2027. Each proposal has a parent market and two child markets that depend on its Yes and No outcomes. The child questions are written as scalar (a number in a range). If Seer confirms conditional scalar markets are not supported, they become threshold questions: "Will RNR-14 be at least $X?"</p>
+
+<div class="market">
+  <h4>FG-01 · Raise the Lane A price floor from $60 to $90 <span class="tag asm">fast lane</span></h4>
+  <dl>
+    <dt>Parent</dt><dd>Will Foreguild execute proposal FG-01 (Lane A floor = $90) by 2027-03-08 12:00 UTC?</dd>
+    <dt>Children</dt><dd>What will Foreguild RNR-14 be for 2027-03-15 to 2027-03-28, in USD? Range 0–20,000. One market conditional on each parent outcome.</dd>
+    <dt>Why it matters</dt><dd>Small tasks cost nearly as much to sell and verify as large ones. A higher floor may lose volume but raise revenue per task.</dd>
+  </dl>
+</div>
+<div class="market">
+  <h4>FG-02 · Raise the Lane A house share target from 70% to 85% <span class="tag asm">fast lane</span></h4>
+  <dl>
+    <dt>Parent</dt><dd>Will Foreguild execute proposal FG-02 (house share target = 85%) by 2027-03-22 12:00 UTC?</dd>
+    <dt>Children</dt><dd>RNR-14 for 2027-03-29 to 2027-04-11, in USD. Range 0–25,000.</dd>
+    <dt>Why it matters</dt><dd>More in-house work earns more per task, but slower delivery may lose buyers. Contribution-margin guardrail applies.</dd>
+  </dl>
+</div>
+<div class="market">
+  <h4>FG-03 · Target outbound at DAO treasuries instead of general open-source repos <span class="tag asm">fast lane</span></h4>
+  <dl>
+    <dt>Parent</dt><dd>Will Foreguild execute proposal FG-03 (outbound segment = DAO-owned repositories) by 2027-04-05 12:00 UTC?</dd>
+    <dt>Children</dt><dd>RNR-14 for 2027-04-12 to 2027-04-25, in USD. Range 0–30,000.</dd>
+    <dt>Why it matters</dt><dd>DAOs hold treasuries and pay in stablecoins without procurement delays. General repositories have more issues but fewer funded buyers.</dd>
+  </dl>
+</div>
+<div class="market">
+  <h4>FG-04 · Spend $15,000 on a 90-day Lane B sales push to 40 prediction-market and oracle teams <span class="tag asm">slow lane</span></h4>
+  <dl>
+    <dt>Parent</dt><dd>Will Foreguild execute proposal FG-04 (Lane B outbound budget = $15,000) by 2027-05-03 12:00 UTC?</dd>
+    <dt>Children</dt><dd>What will Foreguild RNR-90 be for 2027-05-10 to 2027-08-07, in USD? Range 0–250,000.</dd>
+    <dt>Why it matters</dt><dd>Retainers are steady revenue. The question is whether paid outreach adds more retainer revenue than it costs.</dd>
+  </dl>
+</div>
+<div class="market">
+  <h4>FG-05 · Open Lane E, the self-serve open board, at a 10% fee <span class="tag asm">slow lane</span></h4>
+  <dl>
+    <dt>Parent</dt><dd>Will Foreguild execute proposal FG-05 (open Lane E at a 10% settlement fee) by 2027-07-05 12:00 UTC?</dd>
+    <dt>Children</dt><dd>RNR-90 for 2027-07-12 to 2027-10-09, in USD. Range 0–400,000.</dd>
+    <dt>Why it matters</dt><dd>An open board brings new buyers but may pull buyers away from higher-margin managed lanes. This is the market that decides whether Foreguild becomes a marketplace.</dd>
+  </dl>
+</div>
+
+<h2><span class="n">10</span>Unit economics and revenue</h2>
+<h3>One code task (Lane A, base case)</h3>
+<div class="tbl"><table>
+  <thead><tr><th>Per task</th><th class="num">Done in-house</th><th class="num">Routed to outside agent</th></tr></thead>
+  <tbody>
+    <tr><td>Ticket</td><td class="num">$120.00</td><td class="num">$120.00</td></tr>
+    <tr><td>Refunds and credits (3%)</td><td class="num">−$3.60</td><td class="num">−$3.60</td></tr>
+    <tr><td>Payout to outside agent (75%)</td><td class="num">n/a</td><td class="num">−$90.00</td></tr>
+    <tr class="total"><td>Counted in RNR</td><td class="num">$116.40</td><td class="num">$26.40</td></tr>
+    <tr><td>Compute, including failed attempts</td><td class="num">−$8.00</td><td class="num">n/a</td></tr>
+    <tr><td>Verification</td><td class="num">−$3.00</td><td class="num">−$3.00</td></tr>
+    <tr><td>Selling, quoting and test writing, including lost quotes</td><td class="num">−$8.00</td><td class="num">−$8.00</td></tr>
+    <tr class="total"><td>Contribution</td><td class="num">$97.40</td><td class="num">$15.40</td></tr>
+  </tbody>
+</table></div>
+<p>At the 70% house share, blended contribution is <strong>$72.80 per task</strong>. Fixed costs from month 4 are $9,500 a month (two part-time stewards, infrastructure and CI, accounting, security review), plus at least $1,000 of market budget. Lane A alone breaks even at about <strong>144 tasks a month</strong>. A pure 10% marketplace on the same tickets keeps about $8.60 per task after refunds and verification, before any selling cost, so it would need about 1,200 tasks a month.</p>
+
+<h3>Revenue lines</h3>
+<ul>
+  <li><strong>Lane A:</strong> house tickets plus the 25% kept on routed tasks.</li>
+  <li><strong>Lane B:</strong> retainers at $1,500 a month, 30% delivery cost, 1.6% monthly churn, $2,500 to win each client.</li>
+  <li><strong>Lane C:</strong> standing orders at $600 a month, 35% delivery cost, 3% monthly churn, $300 to win each order.</li>
+  <li><strong>Lane D:</strong> per-call API revenue, 40% cost.</li>
+  <li>Not used: token sales, listing fees, selling user data. Escrow float is kept in low-risk stablecoin yield but left out of the model.</li>
+</ul>
+
+<h3>Three cases</h3>
+<div class="tbl"><table>
+  <thead><tr><th>Case</th><th class="num">Lane A tasks, month 12</th><th class="num">Retainers / orders, month 12</th><th class="num">Month-12 RNR</th><th class="num">Year-1 RNR</th><th class="num">First net-positive month</th><th class="num">Peak funding need</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Low</td><td class="num">90 at $100</td><td class="num">3 / 8</td><td class="num">$15.7k</td><td class="num">$74k</td><td class="num">not in year 1</td><td class="num">$96k</td></tr>
+    <tr class="total"><td class="k">Base</td><td class="num">300 at $120</td><td class="num">8 / 25</td><td class="num">$55.8k</td><td class="num">$268k</td><td class="num">7</td><td class="num">$49k</td></tr>
+    <tr><td class="k">High</td><td class="num">900 at $140</td><td class="num">15 / 60</td><td class="num">$164k</td><td class="num">$799k</td><td class="num">3</td><td class="num">$28k</td></tr>
+  </tbody>
+</table></div>
+<p>The low case does not break even in year 1. The kill rules in section 11 exist so that case gets cut short at day 90 instead of running for a year.</p>
+
+<h3>Lane by lane, base case</h3>
+<div class="tbl"><table>
+  <thead><tr><th>Lane</th><th>Customers to cover fixed costs alone</th><th>Cost to win one</th><th>Payback</th><th>Expected paying months (5-year cap)</th><th>Value over five years</th></tr></thead>
+  <tbody>
+    <tr><td class="k">A · code tasks</td><td>144 tasks a month</td><td>in the $8 selling cost per task</td><td>one task</td><td>2.5 tasks</td><td>$182 one-off; $2,364 if 20% convert</td></tr>
+    <tr><td class="k">B · retainers</td><td>10 clients</td><td>$2,500</td><td>2.4 months</td><td>38.8</td><td>$40,692</td></tr>
+    <tr><td class="k">C · standing orders</td><td>27 orders</td><td>$300</td><td>0.8 months</td><td>28.0</td><td>$10,910</td></tr>
+  </tbody>
+</table></div>
+<p>Fixed costs here are $9,500 a month plus $1,000 of market budget. Churn rates, acquisition costs and the 20% conversion are assumptions. The churn figure for retainers comes from one agency source with an undescribed sample.</p>
+
+<div class="chart">
+  <svg id="chart" viewBox="0 0 760 300" role="img" aria-label="Base case monthly retained net revenue against total costs, months 1 to 12"></svg>
+  <div class="legend"><span><i style="background:var(--verdigris)"></i>RNR by month</span><span><i style="background:var(--brass)"></i>Total costs (variable + fixed + market budget)</span></div>
+</div>
+
+<div class="calc no-print" aria-label="Revenue calculator">
+  <div class="row" role="group" aria-label="Case presets">
+    <button type="button" data-case="low" aria-pressed="false">Low</button>
+    <button type="button" data-case="base" aria-pressed="true">Base</button>
+    <button type="button" data-case="high" aria-pressed="false">High</button>
+  </div>
+  <div class="inputs">
+    <label for="i-tasks">Lane A tasks in month 12<input id="i-tasks" type="number" min="0" step="10"></label>
+    <label for="i-ticket">Average ticket ($)<input id="i-ticket" type="number" min="10" step="10"></label>
+    <label for="i-house">House share (%)<input id="i-house" type="number" min="0" max="100" step="5"></label>
+    <label for="i-compute">Compute per house task ($)<input id="i-compute" type="number" min="0" step="1"></label>
+    <label for="i-b">Retainer clients in month 12<input id="i-b" type="number" min="0" step="1"></label>
+    <label for="i-c">Standing orders in month 12<input id="i-c" type="number" min="0" step="1"></label>
+  </div>
+  <div class="out" aria-live="polite">
+    <div><b id="o-m12">–</b><span>Month-12 RNR</span></div>
+    <div><b id="o-y1">–</b><span>Year-1 RNR</span></div>
+    <div><b id="o-be">–</b><span>First net-positive month</span></div>
+    <div><b id="o-peak">–</b><span>Peak funding need</span></div>
+  </div>
+</div>
+<p class="mono no-print" style="color:var(--muted)">The calculator and chart run the same model as <code>model.py</code>, published with this plan. Change any input to see the effect.</p>
+
+<h3>Quarterly envelopes, base case, first year</h3>
+<div class="tbl"><table>
+  <thead><tr><th>Envelope</th><th class="num">Q1</th><th class="num">Q2</th><th class="num">Q3</th><th class="num">Q4</th></tr></thead>
+  <tbody>
+    <tr><td>Setup (entity, escrow contract review, tooling)</td><td class="num">$20,000</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>
+    <tr><td>Fixed operations</td><td class="num">$19,500</td><td class="num">$28,500</td><td class="num">$28,500</td><td class="num">$28,500</td></tr>
+    <tr><td>Decision-market liquidity and forecaster rewards</td><td class="num">$2,000</td><td class="num">$3,000</td><td class="num">$4,100</td><td class="num">$7,200</td></tr>
+    <tr><td>Compute, verification, selling (scales with tasks)</td><td colspan="4" class="num">paid per task from revenue, inside the envelope set each quarter</td></tr>
+  </tbody>
+</table></div>
+
+<h2><span class="n">11</span>First 90 days</h2>
+<div class="tbl"><table>
+  <thead><tr><th>Window</th><th>Work</th><th>Exit test</th><th>Kill or change rule</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Days 1–30</td><td>Deploy escrow on Base from an audited template. Publish the RNR script. House swarm on Lane A for maintainers who opt in. Sign the first Lane B pilots. Shadow markets start.</td><td>5+ paid Lane A tasks from 3+ independent buyers. First-pass acceptance 60%+. 2 Lane B pilots signed.</td><td><span class="tag kill">change</span> Under 3 paid tasks from independent buyers: stop general outbound, focus on Lane B and DAO repos.</td></tr>
+    <tr><td class="k">Days 31–60</td><td>Open outside-agent subcontracting with bonds. Convert repeat buyers to standing orders. First 6 scored shadow decisions.</td><td>15+ tasks a month. First paid retainer. Refund rate under 8%. Scorecard published.</td><td><span class="tag kill">change</span> Refund rate over 15%: pause Lane A quotes over $200 and tighten specs.</td></tr>
+    <tr><td class="k">Days 61–90</td><td>Fast lane starts binding where the depth floor is met. Lane D API opens. First slow-lane proposal (FG-04).</td><td>RNR of $4k or more in month 3 (base case: $4.1k). 20%+ of code buyers have ordered twice. At least one binding fast-lane decision.</td><td><span class="tag kill">kill</span> RNR run-rate under $2.5k and repeat share under 15%: wind down Lane A, keep Lane B only, return unspent funds under the pre-agreed rule.</td></tr>
+  </tbody>
+</table></div>
+
+<h2><span class="n">12</span>Risks</h2>
+<div class="tbl"><table>
+  <thead><tr><th>Risk</th><th>What would show it</th><th>Response</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Buyers do not pay</td><td>Quote acceptance under 3%</td><td>Day-30 and day-90 rules. Lane B gives revenue that does not depend on open-source maintainers.</td></tr>
+    <tr><td class="k">Agent work breaks buyer code</td><td>Audit defect rate over 5%, regressions in the refund window</td><td>Signed tests, second-model review over $300, buyer always merges, lane pause rule.</td></tr>
+    <tr><td class="k">Markets too thin to decide</td><td>Depth floor missed</td><td>Liquidity budget, advisory default, status quo when in doubt.</td></tr>
+    <tr><td class="k">Metric gaming</td><td>Clusters near the 15% cap, new wallets buying tasks</td><td>Independence filter, cap, refund window, subcontract payouts excluded from RNR.</td></tr>
+    <tr><td class="k">Conflict between house and outside agents</td><td>Outside agents leave, routed share falls toward zero</td><td>Published routing rule, payout band set by market, outside-agent steward seat.</td></tr>
+    <tr><td class="k">Compute prices rise</td><td>House compute per task over $35</td><td>Contribution guardrail, house share lever, routing shifts to outside agents automatically.</td></tr>
+    <tr><td class="k">Short-term revenue chasing</td><td>Fast-lane wins that reverse at day 28</td><td>Reversion check, randomised sample, slow lane for anything irreversible.</td></tr>
+    <tr><td class="k">Legal and payments</td><td>Regulator or bank inquiry</td><td>Non-custodial escrow, sanctions screening, DAO legal wrapper chosen with counsel before launch.</td></tr>
+    <tr><td class="k">Seer tooling does not support the design</td><td>Seer confirms conditional scalar markets are unsupported, or futarchy stays price-based and Gnosis-only</td><td>Yes/No threshold questions on documented conditional markets. RNR read from Base events by Reality.eth answerers. Markets stay advisory until confirmed.</td></tr>
+    <tr><td class="k">Few buyers for Lane B</td><td>Fewer than 3 retainer pilots signed by day 60</td><td>Widen to DAOs, oracle users and grant programmes. Lean on Lane A buyers converting to Lane C.</td></tr>
+    <tr><td class="k">Retainer clients leave</td><td>Monthly churn above 3%, or retainers paused or cut back</td><td>Quarterly review, plain monthly reports, a downgrade path to a standing order, churn shown on the scorecard.</td></tr>
+  </tbody>
+</table></div>
+
+<h2><span class="n">13</span>Facts, assumptions and limits</h2>
+<div class="two">
+  <div>
+    <h3><span class="tag fact">checked</span> In Seer's documentation</h3>
+    <ul>
+      <li>Markets resolve through Reality.eth. Kleros arbitrates disputed answers. Market types include categorical, scalar and futarchy, and Reality.eth has a numeric question template.</li>
+      <li>A conditional child market depends on a parent outcome. Collateral is the parent's outcome tokens. A child whose parent resolves differently redeems for zero.</li>
+      <li>Liquidity runs on Swapr (concentrated liquidity). Conditional pools pair a child token with its parent token. Providers earn fees only inside their chosen range.</li>
+      <li>Seer's futarchy product trades a token against a currency in yes and no pools. The proposal passes if yes prices higher. An invalid market counts as failed. "Right now, futarchy markets are only available on Gnosis Chain." The developer docs file the futarchy contracts under "Futarchy (test)".</li>
+    </ul>
+  </div>
+  <div>
+    <h3><span class="tag asm">not confirmed</span> Do not rely on yet</h3>
+    <ul>
+      <li>Whether a conditional child can be a scalar market. The docs do not say.</li>
+      <li>Whether Seer markets can be paired with escrow on Base. The deposit pages I read list Ethereum and Gnosis only.</li>
+      <li>Seer's fees, Reality.eth bond sizes and timeouts, and Kleros appeal timing.</li>
+      <li>Seer's strategy and revenue model. No source I found states them.</li>
+      <li>Optimism's grants experiment (search snippets describe play-money tokens; I did not check the year) and the use of time-weighted prices with a pass margin by existing futarchy DAOs (taken from other entries, not checked).</li>
+    </ul>
+  </div>
+</div>
+<h3>Secondary sources behind the lane evidence</h3>
+<p>These are blogs, guides and vendor posts, so their figures are unverified: retainer churn of about 18% against 42% for project work; Algora bounties of roughly $50 to $500 with a self-reported 15% merge rate and heavy competition; agent cost per coding task of roughly $0.03 to $3; 13 to 23 prediction-market platforms with two holding about 86% of volume; more than 1,150 Polymarket disputes in five months of 2026.</p>
+<h3>Assumptions not yet tested</h3>
+<ul>
+  <li>Ticket sizes, task volumes, house success rates and compute costs.</li>
+  <li>That maintainers and DAOs accept pay-on-merge offers at the modelled rate.</li>
+  <li>Retainer demand from prediction-market and oracle teams, the 1.6% and 3% monthly churn rates, the $2,500 and $300 acquisition costs and the 20% conversion of code buyers.</li>
+  <li>That decision markets reach the depth floor with the budget given.</li>
+</ul>
+<h3>What this plan does not claim</h3>
+<ul>
+  <li>It does not claim futarchy is proven for small organisations. It builds in a shadow stage and a scorecard so the guild can find out cheaply.</li>
+  <li>It does not claim any buyer has committed. The first 30 days exist to test exactly that.</li>
+  <li>It does not claim to know Seer's intentions for Foreguild. It follows the brief as published.</li>
+  <li>It does not use a token, and nothing in the plan depends on one.</li>
+</ul>
+<h3>Sources</h3>
+<ul class="src">
+  <li>Seer documentation: <a href="https://seer-3.gitbook.io/seer-documentation">overview</a>, <a href="https://seer-3.gitbook.io/seer-documentation/getting-started/navigate-our-site/conditional-markets">conditional markets</a>, <a href="https://seer-3.gitbook.io/seer-documentation/getting-started/navigate-our-site/futarchy-markets">futarchy markets</a>, <a href="https://seer-3.gitbook.io/seer-documentation/getting-started/navigate-our-site/provide-liquidity">liquidity</a>.</li>
+  <li>Contest: <a href="https://x.com/seer_pm/status/2118295224036262374">Seer's post, 5 Nov 2026</a> and the <a href="https://poidh.xyz/base/bounty/1531">Poidh bounty</a>.</li>
+  <li>Churn: <a href="https://focus-digital.co/average-marketing-agency-churn/">Focus Digital</a>. Bounties: <a href="https://dev.to/zeroknowledge0x/the-open-source-money-map-every-way-developers-are-actually-making-money-in-2026-with-real-45ba">DEV Community</a>, <a href="https://gigs.sh/p/algora">gigs.sh</a>.</li>
+  <li>Agent cost: <a href="https://ssojet.com/blog/cheapest-ai-coding-models">SSOJet</a>, <a href="https://www.kunalganglani.com/blog/ai-agent-cost-per-task-2026">Kunal Ganglani</a>.</li>
+  <li>Futarchy critique: <a href="https://www.lesswrong.com/posts/mW4ypzR6cTwKqncvp/futarchy-is-parasitic-on-what-it-tries-to-govern">LessWrong</a>.</li>
+  <li>Prediction markets and disputes: <a href="https://www.rotowire.com/prediction-markets/platforms">Rotowire</a>, <a href="https://predictmarkets.com/best-prediction-markets/">PredictMarkets</a>, <a href="https://blog.uma.xyz/articles/what-is-a-prediction-market-dispute">UMA</a>, <a href="https://pillarlabai.com/blog/prediction-market-resolution-disputes/">Pillar Labs</a>.</li>
+</ul>
+
+<footer>
+  Foreguild: The Working Guild · operating plan v1.1 · 2026-11-08 · Model: <code>model.py</code> (python model.py) reproduces every figure in section 10.
+</footer>
+</div>
+
+<script>
+(function(){
+  var CASES={
+    low:{a_tasks:90,a_ticket:100,house_share:.60,sub_payout:.75,compute:12,verify:3,scope:10,refund:.05,b_clients:3,c_orders:8,d_rnr:500},
+    base:{a_tasks:300,a_ticket:120,house_share:.70,sub_payout:.75,compute:8,verify:3,scope:8,refund:.03,b_clients:8,c_orders:25,d_rnr:2000},
+    high:{a_tasks:900,a_ticket:140,house_share:.75,sub_payout:.75,compute:5,verify:3,scope:6,refund:.02,b_clients:15,c_orders:60,d_rnr:6000}
+  };
+  var START={a:1,b:2,c:3,d:4}, SETUP=20000, EXP=1.6;
+  function fixed(m){return m<=3?6500:9500}
+  function ramp(t,m,s){return m<s?0:t*Math.pow((m-s+1)/(13-s),EXP)}
+  function adds(t,m,s,ch){var prev=ramp(t,m-1,s);return Math.max(0,ramp(t,m,s)-prev)+ch*prev}
+  function run(p){
+    var rows=[],cash=-SETUP,low=-SETUP,be=null;
+    for(var m=1;m<=12;m++){
+      var tasks=ramp(p.a_tasks,m,START.a), gmv=tasks*p.a_ticket, house=tasks*p.house_share, sub=tasks-house;
+      var rA=gmv*(1-p.refund)-sub*p.a_ticket*p.sub_payout, vA=house*p.compute+tasks*(p.verify+p.scope);
+      var rB=ramp(p.b_clients,m,START.b)*1500, rC=ramp(p.c_orders,m,START.c)*600, rD=ramp(p.d_rnr,m,START.d);
+      var acq=adds(p.b_clients,m,START.b,.016)*2500+adds(p.c_orders,m,START.c,.03)*300, v=vA+rB*.30+rC*.35+rD*.40+acq, rnr=rA+rB+rC+rD, mb=m>=2?Math.max(1000,.05*rnr):0;
+      var cost=v+fixed(m)+mb, net=rnr-cost; cash+=net; low=Math.min(low,cash); if(be===null&&net>=0)be=m;
+      rows.push({m:m,rnr:rnr,cost:cost});
+    }
+    return {rows:rows,be:be,peak:-low,y1:rows.reduce(function(s,r){return s+r.rnr},0),m12:rows[11].rnr};
+  }
+  function k(x){return x>=1e6?"$"+(x/1e6).toFixed(2)+"M":x>=1e3?"$"+(x/1e3).toFixed(1)+"k":"$"+Math.round(x)}
+  function draw(r){
+    var svg=document.getElementById("chart"), W=760,H=300,L=56,R=12,T=14,B=36, pw=W-L-R, ph=H-T-B;
+    var max=0; r.rows.forEach(function(x){max=Math.max(max,x.rnr,x.cost)});
+    var step=[1e3,2e3,5e3,1e4,2e4,5e4,1e5,2e5,5e5].find(function(s){return max/s<=6})||1e6, top=Math.ceil(max/step)*step||step;
+    var y=function(v){return T+ph-(v/top)*ph}, bw=pw/12, out="";
+    for(var g=0;g<=top;g+=step){out+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(g)+'" y2="'+y(g)+'" style="stroke:var(--rule)" stroke-width="1"/>'+
+      '<text x="'+(L-8)+'" y="'+(y(g)+4)+'" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" style="fill:var(--muted)">'+k(g)+'</text>'}
+    r.rows.forEach(function(x,i){var cx=L+i*bw;
+      out+='<rect x="'+(cx+bw*.18)+'" y="'+y(x.rnr)+'" width="'+(bw*.64)+'" height="'+(T+ph-y(x.rnr))+'" style="fill:var(--verdigris)" rx="2"/>'+
+      '<text x="'+(cx+bw/2)+'" y="'+(H-14)+'" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" style="fill:var(--muted)">M'+x.m+'</text>'});
+    var pts=r.rows.map(function(x,i){return (L+i*bw+bw/2)+","+y(x.cost)}).join(" ");
+    out+='<polyline points="'+pts+'" fill="none" style="stroke:var(--brass)" stroke-width="2.5"/>';
+    r.rows.forEach(function(x,i){out+='<circle cx="'+(L+i*bw+bw/2)+'" cy="'+y(x.cost)+'" r="3" style="fill:var(--brass)"/>'});
+    svg.innerHTML=out;
+  }
+  var ids={tasks:"a_tasks",ticket:"a_ticket",house:"house_share",compute:"compute",b:"b_clients",c:"c_orders"}, cur;
+  function el(i){return document.getElementById("i-"+i)}
+  function load(name){cur=Object.assign({},CASES[name]);
+    Object.keys(ids).forEach(function(i){var v=cur[ids[i]]; el(i).value=i==="house"?Math.round(v*100):v});
+    document.querySelectorAll("[data-case]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.case===name?"true":"false")});
+    update()}
+  function update(){
+    Object.keys(ids).forEach(function(i){var v=parseFloat(el(i).value); if(isNaN(v))return; cur[ids[i]]=i==="house"?Math.min(100,Math.max(0,v))/100:Math.max(0,v)});
+    var r=run(cur); draw(r);
+    document.getElementById("o-m12").textContent=k(r.m12);
+    document.getElementById("o-y1").textContent=k(r.y1);
+    document.getElementById("o-be").textContent=r.be?"Month "+r.be:"Not in year 1";
+    document.getElementById("o-peak").textContent=k(r.peak);
+  }
+  document.querySelectorAll("[data-case]").forEach(function(b){b.addEventListener("click",function(){load(b.dataset.case)})});
+  Object.keys(ids).forEach(function(i){el(i).addEventListener("input",function(){
+    document.querySelectorAll("[data-case]").forEach(function(b){b.setAttribute("aria-pressed","false")}); update()})});
+  load("base");
+})();
+</script>
+
+</body>
+</html>
